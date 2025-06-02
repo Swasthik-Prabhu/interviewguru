@@ -1,16 +1,36 @@
-// app.js
 import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/auth.js";
+import studentRoutes from "./routes/student.js";
 
+// Load environment variables
+dotenv.config();
+
+// Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON bodies
+
+
+// Middleware
+app.use(cors());
 app.use(express.json());
 
-// Import routes
-import indexRoutes from "./routes/index.js";
-app.use("/api", indexRoutes);
+// Routes
+app.get("/", (req, res) => res.send("API is running"));
+// Authentication 
+app.use("/api/auth", authRoutes);
+// Student data
+app.use("/api/student", studentRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Start the server
+const PORT = process.env.PORT || 5200;
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
 });
+
+
+export default app;
